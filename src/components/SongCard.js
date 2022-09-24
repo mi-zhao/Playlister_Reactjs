@@ -53,6 +53,10 @@ export default class SongCard extends React.Component {
         // ASK THE MODEL TO MOVE THE DATA
         this.props.moveCallback(sourceId, targetId);
     }
+    
+    handleDeleteSong = (event) => {
+        console.log("clicked")
+    }
 
     getItemNum = () => {
         return this.props.id.substring("playlist-song-".length);
@@ -77,7 +81,16 @@ export default class SongCard extends React.Component {
                 onDrop={this.handleDrop}
                 draggable="true"
             >
-                {song.title} by {song.artist}
+                {/* <a href="https://www.youtube.com/watch?v=" */}
+                {num}. <a href={"https://www.youtube.com/watch?v=" + song.youTubeId} >{song.title} by {song.artist}</a> 
+                
+                <input
+                    type="button"
+                    id={"delete-song-" + num}
+                    className="playlister-song-button"
+                    onClick={this.handleDeleteSong}
+                    value={"✕"}>
+                </input>
             </div>
         )
     }

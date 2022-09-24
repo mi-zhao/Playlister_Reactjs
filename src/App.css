@@ -19,7 +19,7 @@ body {
 
 #root {
   background-color: var(--swatch-primary);
-  font-family: serif;
+  font-family: 'Tangerine', serif;
   position: absolute;
   width: 80%;
   left: 10%;
@@ -109,7 +109,7 @@ body {
 }
 
 .list-card, .selected-list-card, .unselected-list-card {
-  font-size: 18pt;
+  font-size: 25pt;
   margin: 10px;
   padding: 20px;
   border-radius: 25px;
@@ -154,10 +154,23 @@ body {
 }
 
 .playlister-song, .playlister-song-dragged-to { 
-  display:flex;
   align-items: center;
-  font-size: 24pt;
-  height:20%;
+  font-size: 28pt;
+  height: 10%;
+  background-color: var(--swatch-complement);
+  border-radius: 25px;
+  margin: 10px;
+  padding: 15px;
+}
+
+.playlister-song:hover {
+  cursor: pointer;
+  color:white;
+  background-color: var(--swatch-contrast);
+}
+
+.playlister-song-button {
+    float: right;
 }
 
 input {
