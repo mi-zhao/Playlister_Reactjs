@@ -12,6 +12,7 @@ export default class SongCard extends React.Component {
     handleDragStart = (event) => {
         event.dataTransfer.setData("song", event.target.id);
         this.setState(prevState => ({
+            className : 'playlister-song-selected',
             isDragging: true,
             draggedTo: prevState.draggedTo
         }));
@@ -53,9 +54,16 @@ export default class SongCard extends React.Component {
         // ASK THE MODEL TO MOVE THE DATA
         this.props.moveCallback(sourceId, targetId);
     }
-    
+
+    handleDoubleClick = (event) => {
+        event.preventDefault();
+        let song = this.props.song;
+        this.props.showEditSongModalCallback(this.props.index, song.title, song.artist, song.youTubeId);
+    }
+
     handleDeleteSong = (event) => {
-        console.log("clicked")
+        // event.preventDefault();
+        // this.props.showDeleteSongCallback(this.props.index);
     }
 
     getItemNum = () => {
@@ -65,7 +73,6 @@ export default class SongCard extends React.Component {
     render() {
         const { song } = this.props;
         let num = this.getItemNum();
-        console.log("num: " + num);
         let itemClass = "playlister-song";
         if (this.state.draggedTo) {
             itemClass = "playlister-song-dragged-to";
@@ -79,9 +86,9 @@ export default class SongCard extends React.Component {
                 onDragEnter={this.handleDragEnter}
                 onDragLeave={this.handleDragLeave}
                 onDrop={this.handleDrop}
+                onDoubleClick={this.handleDoubleClick}
                 draggable="true"
             >
-                {/* <a href="https://www.youtube.com/watch?v=" */}
                 {num}. <a href={"https://www.youtube.com/watch?v=" + song.youTubeId} >{song.title} by {song.artist}</a> 
                 
                 <input

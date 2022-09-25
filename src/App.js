@@ -18,6 +18,7 @@ import PlaylistCards from './components/PlaylistCards.js';
 import SidebarHeading from './components/SidebarHeading.js';
 import SidebarList from './components/SidebarList.js';
 import Statusbar from './components/Statusbar.js';
+import EditSongModal from './components/EditSongModal';
 
 class App extends React.Component {
     constructor(props) {
@@ -34,6 +35,7 @@ class App extends React.Component {
 
         // SETUP THE INITIAL STATE
         this.state = {
+            currentSongIndex : null,
             listKeyPairMarkedForDeletion : null,
             currentList : null,
             sessionData : loadedSessionData
@@ -71,6 +73,7 @@ class App extends React.Component {
         // SO ANY AFTER EFFECTS THAT NEED TO USE THIS UPDATED STATE
         // SHOULD BE DONE VIA ITS CALLBACK
         this.setState(prevState => ({
+            currentSongIndex : prevState.currentSongIndex,
             listKeyPairMarkedForDeletion : prevState.listKeyPairMarkedForDeletion,
             currentList: newList,
             sessionData: {
@@ -108,6 +111,7 @@ class App extends React.Component {
 
         // AND FROM OUR APP STATE
         this.setState(prevState => ({
+            currentSongIndex : prevState.currentSongIndex,
             listKeyPairMarkedForDeletion : null,
             currentList: newCurrentList,
             sessionData: {
@@ -152,6 +156,7 @@ class App extends React.Component {
         }
 
         this.setState(prevState => ({
+            currentSongIndex : prevState.currentSongIndex,
             listKeyPairMarkedForDeletion : null,
             sessionData: {
                 nextKey: prevState.sessionData.nextKey,
@@ -171,6 +176,7 @@ class App extends React.Component {
     loadList = (key) => {
         let newCurrentList = this.db.queryGetList(key);
         this.setState(prevState => ({
+            currentSongIndex : prevState.currentSongIndex,
             listKeyPairMarkedForDeletion : prevState.listKeyPairMarkedForDeletion,
             currentList: newCurrentList,
             sessionData: this.state.sessionData
@@ -183,6 +189,7 @@ class App extends React.Component {
     // THIS FUNCTION BEGINS THE PROCESS OF CLOSING THE CURRENT LIST
     closeCurrentList = () => {
         this.setState(prevState => ({
+            currentSongIndex : prevState.currentSongIndex,
             listKeyPairMarkedForDeletion : prevState.listKeyPairMarkedForDeletion,
             currentList: null,
             sessionData: this.state.sessionData
@@ -194,6 +201,7 @@ class App extends React.Component {
     }
     setStateWithUpdatedList(list) {
         this.setState(prevState => ({
+            currentSongIndex : prevState.currentSongIndex,
             listKeyPairMarkedForDeletion : prevState.listKeyPairMarkedForDeletion,
             currentList : list,
             sessionData : this.state.sessionData
@@ -255,6 +263,7 @@ class App extends React.Component {
     }
     markListForDeletion = (keyPair) => {
         this.setState(prevState => ({
+            currentSongIndex: prevState.currentSongIndex,
             currentList: prevState.currentList,
             listKeyPairMarkedForDeletion : keyPair,
             sessionData: prevState.sessionData
@@ -274,6 +283,40 @@ class App extends React.Component {
         let modal = document.getElementById("delete-list-modal");
         modal.classList.remove("is-visible");
     }
+
+    showEditSongModal = (songindex, title, artist, youTubeId) =>{
+        this.setState(prevState => ({
+            currentSongIndex : songindex,
+            listKeyPairMarkedForDeletion : prevState.listKeyPairMarkedForDeletion,
+            currentList : prevState.currentList,
+            sessionData : prevState.sessionData
+
+        }), () => {
+            let modal = document.getElementById("edit-song-modal");
+            document.getElementById("songTitle").value = title;
+            document.getElementById("songArtist").value = artist;
+            document.getElementById("youTubeID").value = youTubeId;
+            modal.classList.add("is-visible");
+        })
+        
+    }
+
+    hideEditSongModal = () => {
+        let modal = document.getElementById("edit-song-modal");
+        modal.classList.remove("is-visible");
+    }
+
+    editSong = (title, artist, youtubeid) => {
+        let song = this.state.currentList.songs[this.state.currentSongIndex];
+        song.title = title;
+        song.artist = artist;
+        song.youTubeId = youtubeid;
+        
+        this.hideEditSongModal();
+        this.setStateWithUpdatedList(this.state.currentList);
+        
+    }
+
     render() {
         let canAddSong = this.state.currentList !== null;
         let canUndo = this.tps.hasTransactionToUndo();
@@ -297,19 +340,27 @@ class App extends React.Component {
                     canUndo={canUndo}
                     canRedo={canRedo}
                     canClose={canClose} 
+                    addSongCallback={this.addSong}
                     undoCallback={this.undo}
                     redoCallback={this.redo}
                     closeCallback={this.closeCurrentList}
                 />
                 <PlaylistCards
                     currentList={this.state.currentList}
-                    moveSongCallback={this.addMoveSongTransaction} />
+                    moveSongCallback={this.addMoveSongTransaction}
+                    showEditSongModalCallback={this.showEditSongModal}
+                    showDeleteSongCallback={this.showDeleteSongModal}
+                     />
                 <Statusbar 
                     currentList={this.state.currentList} />
                 <DeleteListModal
                     listKeyPair={this.state.listKeyPairMarkedForDeletion}
                     hideDeleteListModalCallback={this.hideDeleteListModal}
                     deleteListCallback={this.deleteMarkedList}
+                />
+                <EditSongModal 
+                    editSongModalCallback={this.editSong}
+                    hideEditSongModalCallback={this.hideEditSongModal}
                 />
             </div>
         );
