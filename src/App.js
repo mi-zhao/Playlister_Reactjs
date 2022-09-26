@@ -19,6 +19,7 @@ import SidebarHeading from './components/SidebarHeading.js';
 import SidebarList from './components/SidebarList.js';
 import Statusbar from './components/Statusbar.js';
 import EditSongModal from './components/EditSongModal';
+import DeleteSongModal from './components/DeleteSongModal';
 
 class App extends React.Component {
     constructor(props) {
@@ -290,7 +291,6 @@ class App extends React.Component {
             listKeyPairMarkedForDeletion : prevState.listKeyPairMarkedForDeletion,
             currentList : prevState.currentList,
             sessionData : prevState.sessionData
-
         }), () => {
             let modal = document.getElementById("edit-song-modal");
             document.getElementById("songTitle").value = title;
@@ -298,12 +298,18 @@ class App extends React.Component {
             document.getElementById("youTubeID").value = youTubeId;
             modal.classList.add("is-visible");
         })
-        
     }
 
     hideEditSongModal = () => {
-        let modal = document.getElementById("edit-song-modal");
-        modal.classList.remove("is-visible");
+        this.setState(prevState => ({
+            currentSongIndex : null,
+            listKeyPairMarkedForDeletion : prevState.listKeyPairMarkedForDeletion,
+            currentList : prevState.currentList,
+            sessionData : prevState.sessionData
+        }), () => {
+            let modal = document.getElementById("edit-song-modal");
+            modal.classList.remove("is-visible");
+        })
     }
 
     editSong = (title, artist, youtubeid) => {
@@ -315,6 +321,42 @@ class App extends React.Component {
         this.hideEditSongModal();
         this.setStateWithUpdatedList(this.state.currentList);
         
+    }
+
+    showDeleteSongModal = (index) => {
+        this.setState(prevState => ({
+            currentSongIndex : index,
+            listKeyPairMarkedForDeletion : prevState.listKeyPairMarkedForDeletion,
+            currentList : prevState.currentList,
+            sessionData : prevState.sessionData
+
+        }), () => {
+            let modal = document.getElementById("delete-song-modal");
+            modal.classList.add("is-visible");
+
+            let songspan = document.getElementById("delete-song-span");
+            let songtitle = this.state.currentList.songs[index].title;
+            songspan.innerHTML = "";
+            songspan.appendChild(document.createTextNode(songtitle));
+        })
+    }
+
+    hideDeleteSongModal = () => {
+        this.setState(prevState => ({
+            currentSongIndex : null,
+            listKeyPairMarkedForDeletion : prevState.listKeyPairMarkedForDeletion,
+            currentList : prevState.currentList,
+            sessionData : prevState.sessionData
+        }), () => {
+            let modal = document.getElementById("delete-song-modal");
+            modal.classList.remove("is-visible");
+        })
+    }
+
+    deleteSong = () => {
+        // let song = this.state.currentList.songs[this.state.currentSongIndex];
+        this.state.currentList.songs.splice(this.state.currentSongIndex, 1);
+        this.hideDeleteSongModal();
     }
 
     render() {
@@ -349,7 +391,7 @@ class App extends React.Component {
                     currentList={this.state.currentList}
                     moveSongCallback={this.addMoveSongTransaction}
                     showEditSongModalCallback={this.showEditSongModal}
-                    showDeleteSongCallback={this.showDeleteSongModal}
+                    showDeleteSongModalCallback={this.showDeleteSongModal}
                      />
                 <Statusbar 
                     currentList={this.state.currentList} />
@@ -361,6 +403,10 @@ class App extends React.Component {
                 <EditSongModal 
                     editSongModalCallback={this.editSong}
                     hideEditSongModalCallback={this.hideEditSongModal}
+                />
+                <DeleteSongModal
+                    deleteSongModalCallback={this.deleteSong}
+                    hideDeleteSongModalCallback={this.hideDeleteSongModal}
                 />
             </div>
         );

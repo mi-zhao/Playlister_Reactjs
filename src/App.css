@@ -267,6 +267,10 @@ span {
   font-size: 20pt;
 }
 
+.delete-modal-center {
+  font-size: 40pt;
+}
+
 #title-prompt {
   grid-column: 1 / 2;
   grid-row: 1 / 2;
