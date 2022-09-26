@@ -359,6 +359,16 @@ class App extends React.Component {
         this.hideDeleteSongModal();
     }
 
+    addSong = () => {
+        let song = {
+            title: "Untitled",
+            artist: "Unknown",
+            youTubeId: "dQw4w9WgXcQ"
+        }
+        this.state.currentList.songs.push(song);
+        this.setStateWithUpdatedList(this.state.currentList);
+    }
+
     render() {
         let canAddSong = this.state.currentList !== null;
         let canUndo = this.tps.hasTransactionToUndo();
