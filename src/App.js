@@ -93,6 +93,8 @@ class App extends React.Component {
             // SO IS STORING OUR SESSION DATA
             this.db.mutationUpdateSessionData(this.state.sessionData);
         });
+        this.tps.clearAllTransactions();
+        this.checkUndoRedo();
     }
     // THIS FUNCTION BEGINS THE PROCESS OF DELETING A LIST.
     deleteList = (key) => {
@@ -410,6 +412,7 @@ class App extends React.Component {
         document.getElementById("redo-button").disabled = true;
         document.getElementById("add-song-button").disabled = true;
         document.getElementById("close-button").disabled = true;
+        document.getElementById("add-list-button").disabled = true;
     }
 
     enableEditToolBarButtons() {
@@ -422,6 +425,7 @@ class App extends React.Component {
 
         document.getElementById("add-song-button").disabled = false;
         document.getElementById("close-button").disabled = false;
+        document.getElementById("add-list-button").disabled = false;
     }
 
     componentDidMount() {
