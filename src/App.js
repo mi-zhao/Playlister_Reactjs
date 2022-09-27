@@ -424,11 +424,28 @@ class App extends React.Component {
         document.getElementById("close-button").disabled = false;
     }
 
+    componentDidMount() {
+        const theapp = this;
+        document.addEventListener('keydown', function(event) {
+            if (event.ctrlKey || event.metaKey) {
+                if (event.key === 'z') {
+                    theapp.undo();
+                    console.log("undoo!");
+                }
+                else if (event.key === 'y') {
+                    theapp.redo();
+                    console.log("redoo!");
+                }
+            }
+        });
+    }
+
     render() {
         let canAddSong = this.state.currentList !== null;
         let canUndo = this.tps.hasTransactionToUndo();
         let canRedo = this.tps.hasTransactionToRedo();
         let canClose = this.state.currentList !== null;
+        
         return (
             <div id="root">
                 <Banner />
