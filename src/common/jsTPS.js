@@ -180,6 +180,17 @@ export default class jsTPS {
             this.mostRecentTransaction--;
             this.performingUndo = false;
         }
+        if(this.hasTransactionToRedo())
+            document.getElementById("redo-button").setAttribute("class", "toolbar-button")
+        else{
+            document.getElementById("redo-button").setAttribute("class", "toolbar-button-disabled")
+            console.log("eep undo")
+        }
+        if(this.hasTransactionToUndo())
+            document.getElementById("undo-button").setAttribute("class", "toolbar-button")
+        else{
+            document.getElementById("undo-button").setAttribute("class", "toolbar-button-disabled")
+        }
     }
 
     /**

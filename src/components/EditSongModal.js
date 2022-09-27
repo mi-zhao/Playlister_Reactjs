@@ -13,14 +13,14 @@ export default class EditSongModal extends Component {
                             Edit Song
                         </div>
                         <div class="modal-center">
-                            <div class="modal-center-content">
-                                <label for="songTitle">Title</label>
-                                <input type="text" id="songTitle" name="songTitle"></input>
-                                <label for="songArtist">Artist</label>
-                                <input type="text" id="songArtist" name="songArtist"></input> 
-                                <label for="youTubeID">YouTube ID</label>
-                                <input type="text" id="youTubeID" name="youTubeID"></input>
-                            </div>
+                        <table class="edit-modal-center-content">
+                                <td>Title</td>
+                                <td><input type="text" id="songTitle" name="songTitle"></input></td>
+                                <td>Artist</td>
+                                <td><input type="text" id="songArtist" name="songArtist"></input> </td>
+                                <td>YouTube ID</td>
+                                <td><input type="text" id="youTubeID" name="youTubeID"></input></td>
+                            </table>
                         </div>
                         <div class="modal-south">
                             <input type="button" 

@@ -188,6 +188,7 @@ class App extends React.Component {
             // AN AFTER EFFECT IS THAT WE NEED TO MAKE SURE
             // THE TRANSACTION STACK IS CLEARED
             this.tps.clearAllTransactions();
+            this.checkUndoRedo();
         });
     }
     // THIS FUNCTION BEGINS THE PROCESS OF CLOSING THE CURRENT LIST
@@ -201,6 +202,7 @@ class App extends React.Component {
             // AN AFTER EFFECT IS THAT WE NEED TO MAKE SURE
             // THE TRANSACTION STACK IS CLEARED
             this.tps.clearAllTransactions();
+            this.checkUndoRedo();
         });
     }
     setStateWithUpdatedList(list) {
@@ -255,6 +257,7 @@ class App extends React.Component {
             // MAKE SURE THE LIST GETS PERMANENTLY UPDATED
             this.db.mutationUpdateList(this.state.currentList);
         }
+        this.checkUndoRedo();
     }
     // THIS FUNCTION BEGINS THE PROCESS OF PERFORMING A REDO
     redo = () => {
@@ -264,6 +267,7 @@ class App extends React.Component {
             // MAKE SURE THE LIST GETS PERMANENTLY UPDATED
             this.db.mutationUpdateList(this.state.currentList);
         }
+        this.checkUndoRedo();
     }
     markListForDeletion = (keyPair) => {
         this.setState(prevState => ({
@@ -295,6 +299,7 @@ class App extends React.Component {
             currentList : prevState.currentList,
             sessionData : prevState.sessionData
         }), () => {
+            this.disableEditToolBarButtons();
             let modal = document.getElementById("edit-song-modal");
             document.getElementById("songTitle").value = title;
             document.getElementById("songArtist").value = artist;
@@ -310,6 +315,7 @@ class App extends React.Component {
             currentList : prevState.currentList,
             sessionData : prevState.sessionData
         }), () => {
+            this.enableEditToolBarButtons();
             let modal = document.getElementById("edit-song-modal");
             modal.classList.remove("is-visible");
         })
@@ -329,6 +335,9 @@ class App extends React.Component {
     editSongTransaction = (title, artist, youtubeid) => {
         let transaction = new EditSong_Transaction(this, this.state.currentSongIndex, title, artist, youtubeid);
         this.tps.addTransaction(transaction);
+        
+        this.checkUndoRedo();
+        this.hideEditSongModal();
     }
 
     showDeleteSongModal = (index) => {
@@ -339,6 +348,7 @@ class App extends React.Component {
             sessionData : prevState.sessionData
 
         }), () => {
+            this.disableEditToolBarButtons();
             let modal = document.getElementById("delete-song-modal");
             modal.classList.add("is-visible");
 
@@ -356,22 +366,62 @@ class App extends React.Component {
             currentList : prevState.currentList,
             sessionData : prevState.sessionData
         }), () => {
+            this.enableEditToolBarButtons();
             let modal = document.getElementById("delete-song-modal");
             modal.classList.remove("is-visible");
         })
     }
 
     deleteSongTransaction = () => {
-        console.log("index at transaction:", this.state.currentSongIndex);
         let transaction = new DeleteSong_Transaction(this, this.state.currentSongIndex);
         this.tps.addTransaction(transaction);
+        this.hideDeleteSongModal();
+        this.checkUndoRedo();
     }
-
 
     // THIS FUNCTION ADDS A AddSong_Transaction TO THE TRANSACTION STACK
     addSong = () => {
         let transaction = new AddSong_Transaction(this);
         this.tps.addTransaction(transaction);
+        this.checkUndoRedo();
+    }
+
+    checkUndoRedo() {
+        let undoButton = document.getElementById("undo-button");
+        let redoButton = document.getElementById("redo-button");
+        
+        if (this.tps.getUndoSize() === 0) {
+            undoButton.disabled = true;
+        }
+        else {
+            undoButton.disabled = false;
+        }
+        
+        if (this.tps.getRedoSize() === 0) {
+            redoButton.disabled = true
+        }
+        else {
+            redoButton.disabled = false;
+        }
+    }
+
+    disableEditToolBarButtons() {
+        document.getElementById("undo-button").disabled = true;
+        document.getElementById("redo-button").disabled = true;
+        document.getElementById("add-song-button").disabled = true;
+        document.getElementById("close-button").disabled = true;
+    }
+
+    enableEditToolBarButtons() {
+        if (this.tps.hasTransactionToUndo) {
+            document.getElementById("undo-button").disabled = false;
+        }
+        if (this.tps.hasTransactionToRedo) {
+            document.getElementById("redo-button").disabled = false;
+        }
+
+        document.getElementById("add-song-button").disabled = false;
+        document.getElementById("close-button").disabled = false;
     }
 
     render() {

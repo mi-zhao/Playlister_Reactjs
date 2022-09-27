@@ -16,10 +16,20 @@ export default class EditSong_Transaction extends jsTPS_Transaction {
     }
 
     doTransaction() {
-        this.app.editSong(this.songindex, this.newtitle, this.newartist, this.newlink);
+        let song = this.app.state.currentList.songs[this.songindex];
+        song.title = this.newtitle;
+        song.artist = this.newartist;
+        song.youTubeId = this.newlink;
+        
+        this.app.setStateWithUpdatedList(this.app.state.currentList);
     }
     
     undoTransaction() {
-        this.app.editSong(this.songindex, this.oldtitle, this.oldartist, this.oldlink);
+        let song = this.app.state.currentList.songs[this.songindex];
+        song.title = this.oldtitle;
+        song.artist = this.oldartist;
+        song.youTubeId = this.oldlink;
+        
+        this.app.setStateWithUpdatedList(this.app.state.currentList);
     }
 }

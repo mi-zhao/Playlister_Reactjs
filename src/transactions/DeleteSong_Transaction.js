@@ -4,6 +4,7 @@ export default class DeleteSong_Transaction extends jsTPS_Transaction {
     constructor(initApp, songIndex) {
         super();
         this.app = initApp;
+
         this.songIndex = songIndex;
         this.deletedSong = {
             title: this.app.state.currentList.songs[songIndex].title,
@@ -14,7 +15,7 @@ export default class DeleteSong_Transaction extends jsTPS_Transaction {
 
     doTransaction() {
         this.app.state.currentList.songs.splice(this.songIndex, 1);
-        this.app.hideDeleteSongModal();
+        this.app.setStateWithUpdatedList(this.app.state.currentList);
     }
     
     undoTransaction() {
