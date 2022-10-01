@@ -205,6 +205,7 @@ class App extends React.Component {
             // THE TRANSACTION STACK IS CLEARED
             this.tps.clearAllTransactions();
             this.checkUndoRedo();
+            document.getElementById("add-list-button").disabled = false;
         });
     }
     setStateWithUpdatedList(list) {
@@ -285,11 +286,13 @@ class App extends React.Component {
     // THIS FUNCTION SHOWS THE MODAL FOR PROMPTING THE USER
     // TO SEE IF THEY REALLY WANT TO DELETE THE LIST
     showDeleteListModal() {
+        this.disableEditToolBarButtons();
         let modal = document.getElementById("delete-list-modal");
         modal.classList.add("is-visible");
     }
     // THIS FUNCTION IS FOR HIDING THE MODAL
     hideDeleteListModal() {
+        this.checkUndoRedo();
         let modal = document.getElementById("delete-list-modal");
         modal.classList.remove("is-visible");
     }
@@ -391,7 +394,8 @@ class App extends React.Component {
     checkUndoRedo() {
         let undoButton = document.getElementById("undo-button");
         let redoButton = document.getElementById("redo-button");
-        
+        document.getElementById("add-list-button").disabled = true;
+
         if (this.tps.getUndoSize() === 0) {
             undoButton.disabled = true;
         }
@@ -425,7 +429,7 @@ class App extends React.Component {
 
         document.getElementById("add-song-button").disabled = false;
         document.getElementById("close-button").disabled = false;
-        document.getElementById("add-list-button").disabled = false;
+        document.getElementById("add-list-button").disabled = true;
     }
 
     componentDidMount() {
